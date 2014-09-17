@@ -1,0 +1,25 @@
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" WindowStartupLocation="CenterScreen"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms" 
+xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration" 
+Title="Authorization" Style="{StaticResource Browser}" ShowInTaskbar="False" ShowActivated="True">
+  <StackPanel Name="Wrap">
+    <Grid Background="#597DA3">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+      <TextBlock Name="CloseButton" Style="{StaticResource VkButton}" Grid.Column="1">
+        Закрыть окно
+      </TextBlock>
+    </Grid>
+    <wfi:WindowsFormsHost>
+      <wf:WebBrowser x:Name="Browser" Height="375" Width="655" ScrollBarsEnabled="False" />
+    </wfi:WindowsFormsHost>
+    <Grid Background="#597DA3" Height="33">
+      <TextBlock Foreground="White" Padding="8,8,8,8" FontSize="12" Width="655" TextWrapping="Wrap">
+        To continue, you'll need to authorize or change Low-Integrity Level Cookies by any means available
+        (<Hyperlink Name="Link" Style="{StaticResource Link}" NavigateUri="http://www.google.com">here</Hyperlink>  is the source)
+      </TextBlock>
+    </Grid>
+  </StackPanel>
+</Window>

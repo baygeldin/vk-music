@@ -1,0 +1,18 @@
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Icon="/VKmusicID3;component/favicon.ico"
+Title="Help" ResizeMode="NoResize" Height="400" Width="600" WindowStartupLocation="CenterScreen">
+    <Window.Background>
+        <ImageBrush ImageSource="/VKmusicID3;component/help.jpg"/>
+    </Window.Background>
+    <StackPanel Name="Wrap">
+        <Border Style="{StaticResource Graybg}" Padding="5">
+            <TextBlock>
+                ARTIST - name of the artist<LineBreak />
+                SONG - title of the song<LineBreak />
+                NUM - song number in your playlist<LineBreak />
+                NUMX - simply NUM with leading zeros
+                //help (+ там инфа про //get lyrics может приложение положить на 20 минут...) //но ведь будет доставать текст пока скачивается?
+            </TextBlock>
+        </Border>
+    </StackPanel>
+</Window>
