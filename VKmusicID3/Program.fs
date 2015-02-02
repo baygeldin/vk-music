@@ -4,21 +4,7 @@
 *)
 
 module Main
-//why opening System.Forms after System.Windows leads to some errors in code?
-//->dropbox
-//есть мнение, что приложения, предоставляющие возможность скачать музыку, будут блокировать, поэтому
-//вот ссылка на исходники... там-то там-то изменить APP ID
-//.gitignore
-(* Если вам нужно решить, открывать окно или нет, а решение зависит от окна таким образом, что ему нужно
-сначала загрузиться (например посмотреть был ли редирект на другую страницу, но при этом, блеать, 
-не HTTP, а каким-нибудь meta или javascript'ом), то у вас просто не выйдет, используя стандартный стиль окна,
-спратать его, чтобы оно не моргнуло где-нибудь, взрывая ваш неврото-перфексионистический мозг. 
-Если же менять стили на ходу, то код превратится в такую кашу, что без слез не взглянешь.
-Даже кастомизировав стиль, ваши глаза все-равно будут истекать кровью от созерцания этого пиздеца. 
-А если в окне есть что-то не нативное для WPF, например WebBrowser Control, то при попытке манипулировать
-прозрачностью окна вашу попу окончательно разорвет и вы поймете, что компьютеры и стремление к прекрасному несовместимы. 
-Deal with it. *)
-//vk выдает песен меньше чем пишет, сколько их там есть
+
 open System
 open System.Windows.Forms
 open System.Windows.Forms.Integration
@@ -170,7 +156,7 @@ let mainWindow() =
                                     .Foreground <- Brushes.Red)
                             |> mainThread
                 web.DownloadDataCompleted.Add(downloadCompleted)
-                if not (File.Exists(folder + "\\" + filename + ".mp3")) then // если рыжий то надо перекачать лирику
+                if not (File.Exists(folder + "\\" + filename + ".mp3")) then
                     web.DownloadDataAsync(new Uri((fst song).url))
             let lockFun() =
                 match list with
@@ -215,9 +201,7 @@ let mainWindow() =
         if not (Directory.Exists(folder + "\\Lyrics")) then
             Directory.CreateDirectory(folder + "\\Lyrics") |> ignore
         for thread = 1 to Math.Min(10, songs.Length) do
-            Async.Start(async { downloadQueueAsync songs songs.Length }) //ждать пока все не закончится,
-            //а то что там в прогрессчендж убрать нафиг, т.к. не все может скачаться
-            //taglib не для всех делает что надо....
+            Async.Start(async { downloadQueueAsync songs songs.Length })
     window.SelectFolder.Click.Add(fun _ -> selectFile())
     window.Generate.Click.Add(fun _ -> generateList())
     window.Invert.Click.Add(fun _ -> invertSelecting())
