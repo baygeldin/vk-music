@@ -1,0 +1,130 @@
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:helpers="clr-namespace:ViewHelpers;assembly=VKmusicID3"     
+        Title="{Binding Name, StringFormat='VKmusicID3 ({0})'}" ResizeMode="NoResize" Icon="favicon.ico"
+        SizeToContent="Height" Width="350" WindowStartupLocation="CenterScreen" IsEnabled="False">
+    <Window.Background>
+        <ImageBrush ImageSource="/VKmusicID3;component/bg.jpg"/>
+    </Window.Background>
+    <Window.Resources>
+        <helpers:BooleanInverter x:Key="BooleanInverter" />
+        <helpers:SongConverter x:Key="SongConverter" />
+        <helpers:ProgressConverter x:Key="ProgressConverter" />
+        <helpers:ForegroundConverter x:Key="ForegroundConverter" />
+    </Window.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="ContentRendered">
+            <i:InvokeCommandAction Command="{Binding ShowAuth}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <StackPanel Name="Wrap">
+        <Menu>
+            <MenuItem Header="_Help" Name="Help" Command="{Binding ShowHelp}" />
+        </Menu>
+        <Border BorderThickness="0" Padding="5">
+            <StackPanel Name="Content">
+                <Button Name="Generate" Margin="0,0,0,5" Height="20" Command="{Binding GenerateList}">Generate list of songs</Button>
+                <Border Style="{StaticResource Graybg}" Padding="0 3 3 0">
+                    <ScrollViewer Name="Scroll" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Hidden" Height="150" Margin="0,0,0,5">
+                        <StackPanel Name="ListWrap" IsEnabled="False">
+                            <Label Name="Info">There will be a generated list.</Label>
+                            <ListView Name="List" ItemsSource="{Binding SongList, IsAsync=True}" Visibility="Collapsed" 
+                                      Background="Transparent" BorderThickness="0" Padding="0">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding IsChecked}">
+                                            <CheckBox.Content>
+                                                <MultiBinding Converter="{StaticResource SongConverter}">
+                                                    <Binding Path="Value.Artist" />
+                                                    <Binding Path="Value.Title" />
+                                                </MultiBinding>
+                                            </CheckBox.Content>
+                                        </CheckBox>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                                <ListView.Style>
+                                    <Style TargetType="{x:Type ListView}">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ListView">
+                                                    <ItemsPresenter />
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsEnabled" Value="False">
+                                                            <Setter Property="Background" Value="Transparent" />
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ListView.Style>
+                            </ListView>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Button Name="Invert" Style="{StaticResource LinkButton}" Command="{Binding InvertSelecting}">Invert selecting</Button>
+                </Grid>
+                <Grid Margin="0,0,0,10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="50" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Row="0" Grid.Column="0" Name="Folder" Text="{Binding Folder, TargetNullValue='Select directory where to save files...'}" 
+                             IsReadOnly="True" Foreground="{Binding Folder, Converter={StaticResource ForegroundConverter}}" Margin="0,0,5,0" Height="20" />
+                    <Button Grid.Row="0" Grid.Column="1" Name="SelectFolder" Height="20" Command="{Binding SelectFile}">Select</Button>
+                </Grid>
+                <Border Style="{StaticResource Graybg}" Margin="0,0,0,10">
+                    <StackPanel>
+                        <TextBox Name="Format" Text="{Binding Format, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" Height="20" Style="{StaticResource TextBoxError}" 
+                                 Validation.ErrorTemplate="{x:Null}" />
+                        <TextBlock>
+                            ARTIST - name of the artist<LineBreak />
+                            SONG - title of the song<LineBreak />
+                            NUM - song number in your playlist<LineBreak />
+                            NUMX - simply NUM with leading zeros
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+                <Grid Margin="0,0,0,10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0">Save lyrics?</Label>
+                    <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
+                        <RadioButton Name="Lyrics" GroupName="Lyrics" Content="Yes"  IsChecked="{Binding Lyrics}"/>
+                        <RadioButton GroupName="Lyrics" Content="No" Margin="30,0,10,0" 
+                                     IsChecked="{Binding Lyrics, Converter={StaticResource BooleanInverter}}" />
+                    </StackPanel>
+                    <Label Grid.Row="1" Grid.Column="0">Clear album title?</Label>
+                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
+                        <RadioButton Name="Album" GroupName="Album" Content="Yes" IsChecked="{Binding Album}" />
+                        <RadioButton GroupName="Album" Content="No" Margin="30,0,10,0" 
+                                     IsChecked="{Binding Album, Converter={StaticResource BooleanInverter}}" />
+                    </StackPanel>
+                </Grid>
+                <Button Name="Download" Height="20" Command="{Binding DownloadSongs}" Style="{StaticResource DownloadButton}">
+                    <Button.Content>
+                        <MultiBinding Converter="{StaticResource ProgressConverter}" TargetNullValue="Download">
+                            <Binding Path="Downloaded"/>
+                            <Binding Path="Amount"/>
+                        </MultiBinding>
+                    </Button.Content>
+                </Button>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</Window>

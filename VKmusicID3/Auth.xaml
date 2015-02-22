@@ -1,0 +1,35 @@
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
+        xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration" 
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:helpers="clr-namespace:ViewHelpers;assembly=VKmusicID3" 
+        Title="Authorization" Style="{StaticResource Browser}" ShowInTaskbar="False" ShowActivated="True"
+        WindowStartupLocation="CenterScreen" helpers:WindowHelper.DialogResult="{Binding Cancelled}">
+    <StackPanel Name="Wrap">
+        <Grid Background="#597DA3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Name="CloseButton" Style="{StaticResource VkButton}" Grid.Column="1">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="PreviewMouseDown">
+                        <i:InvokeCommandAction Command="{Binding Close}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                Закрыть окно
+            </TextBlock>
+        </Grid>
+        <wfi:WindowsFormsHost helpers:WebBrowserHelper.Source="{Binding CurrentUri}">
+            <wf:WebBrowser x:Name="Browser" Height="375" Width="655" ScrollBarsEnabled="False" ScriptErrorsSuppressed="True" />
+        </wfi:WindowsFormsHost>
+        <Grid Background="#597DA3" Height="33">
+            <TextBlock Foreground="White" Padding="8,8,8,8" FontSize="12" Width="655" TextWrapping="Wrap">
+                To continue, you'll need to authorize or change Low-Integrity Level Cookies by any means available
+                (<Hyperlink Name="Link" Style="{StaticResource Link}" Command="{Binding Navigate}" 
+                            CommandParameter="https://github.com/a-baygeldin/vk-music">here</Hyperlink>  is the source)
+            </TextBlock>
+        </Grid>
+    </StackPanel>
+</Window>

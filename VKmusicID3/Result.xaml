@@ -1,0 +1,27 @@
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+        Icon="/VKmusicID3;component/favicon.ico" Title="Result" 
+        xmlns:helpers="clr-namespace:ViewHelpers;assembly=VKmusicID3"  ShowInTaskbar="False" ShowActivated="True"
+        ResizeMode="NoResize" Width="200" WindowStartupLocation="CenterScreen" SizeToContent="Height">
+    <Window.Resources>
+        <helpers:CheckedAmountConverter x:Key="CheckedAmountConverter" />
+        <helpers:IsFailedConverter x:Key="IsFailedConverter" />
+        <helpers:IsSuccessConverter x:Key="IsSuccessConverter" />
+    </Window.Resources>
+    <StackPanel Name="Wrap"  Margin="5">
+        <StackPanel Name="Success" Visibility="{Binding SongList, Converter={StaticResource IsFailedConverter}}">
+            <Image Source="/VKmusicID3;component/failed.gif" HorizontalAlignment="Center" Width="86" />
+            <TextBlock TextWrapping="Wrap" TextAlignment="Center" 
+                       Text="{Binding SongList, Converter={StaticResource CheckedAmountConverter}, StringFormat='{}{0} songs or lyrics failed to download ._.'}"/>
+            <Button Command="{Binding DownloadSongs}" Name="Reload" Content="Download failed songs" Margin="0 0 0 5" />
+            <Button Name="Close" Content="Try later" />
+        </StackPanel>
+        <StackPanel Name="Error" Visibility="{Binding SongList, Converter={StaticResource IsSuccessConverter}}">
+            <Image Source="/VKmusicID3;component/success.gif" HorizontalAlignment="Center" Width="86" />
+            <TextBlock TextWrapping="Wrap" TextAlignment="Center">
+                Awesome! It's done ^^
+            </TextBlock>
+            <Button Command="{Binding Shutdown}" Content="Exit" />
+        </StackPanel>
+    </StackPanel>
+</Window>

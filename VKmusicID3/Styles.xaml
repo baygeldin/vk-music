@@ -1,75 +1,99 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <Style x:Key="Graybg" TargetType="Border">
-    <Setter Property="Background">
-      <Setter.Value>
-        <SolidColorBrush Opacity="0.6" Color="GhostWhite"/>
-      </Setter.Value>
-    </Setter>
-    <Setter Property="BorderBrush" Value="Gainsboro" />
-    <Setter Property="BorderThickness" Value="1" />
-    <Setter Property="Padding" Value="5,5,5,0" />
-  </Style>
-  <Style x:Key="Link" TargetType="Hyperlink">
-    <Style.Triggers>
-      <Trigger Property="IsMouseOver" Value="True">
-        <Setter Property="Foreground" Value="CornflowerBlue" />
-      </Trigger>
-    </Style.Triggers>
-    <Setter Property="Foreground" Value="SkyBlue" />
-  </Style>
-  <Style x:Key="VkButton" TargetType="TextBlock">
-    <Setter Property="Foreground" Value="White" />
-    <Setter Property="FontSize" Value="12" />
-    <Setter Property="FontWeight" Value="Bold" />
-    <Setter Property="Margin" Value="0,0,18,0" />
-    <Style.Triggers>
-      <Trigger Property="IsMouseOver" Value="true">
-        <Setter Property="TextDecorations" Value="Underline" />
-        <Setter Property="Cursor" Value="Hand" />
-      </Trigger>
-    </Style.Triggers>
-  </Style>
-  <Style x:Key="LinkButton" TargetType="Button">
-    <Setter Property="Width" Value="Auto" />
-    <Setter Property="Margin" Value="0,0,0,10" />
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="Button">
-          <ContentPresenter VerticalAlignment="Center">
-            <ContentPresenter.Resources>
-              <Style TargetType="TextBlock">
+    <Style x:Key="Graybg" TargetType="Border">
+        <Setter Property="Background">
+            <Setter.Value>
+                <SolidColorBrush Opacity="0.6" Color="GhostWhite"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="BorderBrush" Value="Gainsboro" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="5" />
+    </Style>
+    <Style x:Key="Link" TargetType="Hyperlink">
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="CornflowerBlue" />
+            </Trigger>
+        </Style.Triggers>
+        <Setter Property="Foreground" Value="SkyBlue" />
+    </Style>
+    <Style x:Key="VkButton" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Margin" Value="0,0,18,0" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
                 <Setter Property="TextDecorations" Value="Underline" />
-                <Setter Property="FontWeight" Value="Medium" />
                 <Setter Property="Cursor" Value="Hand" />
-              </Style>
-            </ContentPresenter.Resources>
-          </ContentPresenter>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-    <Setter Property="Cursor" Value="Hand" />
-    <Setter Property="Foreground" Value="SkyBlue" />
-    <Style.Triggers>
-      <Trigger Property="IsMouseOver" Value="true">
-        <Setter Property="Foreground" Value="CornflowerBlue" />
-      </Trigger>
-    </Style.Triggers>
-  </Style>
-  <Style x:Key="Browser" TargetType="Window">
-    <Setter Property="WindowStyle" Value="None" />
-    <Setter Property="ResizeMode" Value="NoResize" />
-    <Setter Property="SizeToContent" Value="WidthAndHeight" />
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="Window">
-          <Grid>
-            <Border BorderThickness="2" BorderBrush="#597DA3">
-              <ContentPresenter />
-            </Border>
-          </Grid>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="LinkButton" TargetType="Button">
+        <Setter Property="Width" Value="Auto" />
+        <Setter Property="Margin" Value="0,0,0,10" />
+        <Setter Property="Template">
+        <Setter.Value>
+            <ControlTemplate TargetType="Button">
+                <ContentPresenter VerticalAlignment="Center">
+                    <ContentPresenter.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="TextDecorations" Value="Underline" />
+                            <Setter Property="FontWeight" Value="Medium" />
+                            <Setter Property="Cursor" Value="Hand" />
+                        </Style>
+                    </ContentPresenter.Resources>
+                </ContentPresenter>
+            </ControlTemplate>
+        </Setter.Value>
+        </Setter>
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Foreground" Value="SkyBlue" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter Property="Foreground" Value="CornflowerBlue" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="Browser" TargetType="Window">
+        <Setter Property="WindowStyle" Value="None" />
+        <Setter Property="ResizeMode" Value="NoResize" />
+        <Setter Property="SizeToContent" Value="WidthAndHeight" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Window">
+                <Grid>
+                    <Border BorderThickness="2" BorderBrush="#597DA3">
+                        <ContentPresenter />
+                    </Border>
+                </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="TextBoxError" TargetType="{x:Type TextBox}">
+        <Style.Triggers>
+            <Trigger Property="Validation.HasError" Value="true">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <SolidColorBrush Opacity="0.5" Color="Red"/>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="DownloadButton" TargetType="Button">
+        <Setter Property="IsEnabled" Value="False"/>
+        <Style.Triggers>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Path=(Validation.HasError), ElementName=Format}" Value="False"/>
+                    <Condition Binding="{Binding Path=IsEnabled, ElementName=ListWrap}" Value="True"/>
+                    <Condition Binding="{Binding Path=Foreground, ElementName=Folder}" Value="Black"/>
+                </MultiDataTrigger.Conditions>
+                <Setter Property="IsEnabled" Value="True"/>
+            </MultiDataTrigger>
+        </Style.Triggers>
+    </Style>
 </ResourceDictionary>
