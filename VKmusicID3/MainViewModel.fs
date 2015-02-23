@@ -140,18 +140,19 @@ type MainViewModel (vkClient:VkAudio) as this =
         new RelayCommand ((fun _ -> true), (fun _ -> shutdownRequested.Trigger()))
 
     member this.DownloadSongs =
+        let awaitTask = Async.AwaitIAsyncResult >> Async.Ignore
         let mutex = new SemaphoreSlim(1)
         let progressChange() =
+            async.Bind(mutex.WaitAsync()  |> awaitTask, (fun _ -> async.Zero())) |> ignore
             this.Downloaded <- this.Downloaded + 1
-            mutex.Release() |> ignore
             if (this.Downloaded = this.Amount) then 
                 this.Downloaded <- 0
                 this.Amount <- 0
                 (fun _ -> loadCompleted.Trigger()) |> Helper.mainThread
+            mutex.Release() |> ignore
         let uncheck (song:Song) =
             (List.find (fun (a:CheckableItem<Song>) -> a.Value = song) this.SongList).IsChecked <- false
         let rec downloadQueueAsync (list:Song list) =
-            let awaitTask = Async.AwaitIAsyncResult >> Async.Ignore
             let processSong (song:Song) = 
                 let web = new WebClient()
                 let signal = new SemaphoreSlim(0, 1)
@@ -186,7 +187,6 @@ type MainViewModel (vkClient:VkAudio) as this =
                         | _ -> if (File.Exists(lyricsFileName)) then File.Delete(lyricsFileName)  
                 let downloadCompleted (args:DownloadDataCompletedEventArgs) =
                     try
-                        signal.Release() |> ignore
                         File.WriteAllBytes(audioFileName, args.Result)
                         //Working with ID3 tags
                         let file = TagLib.File.Create(audioFileName)
@@ -203,6 +203,7 @@ type MainViewModel (vkClient:VkAudio) as this =
                             | _ -> file.Save(); File.Delete(audioFileName)
                     with
                         | _ -> if (File.Exists(audioFileName)) then File.Delete(audioFileName)
+                    signal.Release() |> ignore
                 web.DownloadDataCompleted.Add(downloadCompleted)
                 if not (File.Exists(audioFileName)) then
                     web.DownloadDataAsync(new Uri(song.Url))
@@ -218,7 +219,6 @@ type MainViewModel (vkClient:VkAudio) as this =
                     async { 
                         do! processSong elem
                         throttler.Release() |> ignore
-                        do! mutex.WaitAsync() |> awaitTask
                         progressChange()
                     } |> Async.Start
             } |> Async.Start
@@ -229,10 +229,13 @@ type MainViewModel (vkClient:VkAudio) as this =
                 |> List.filter (fun (a:CheckableItem<Song>) -> a.IsChecked)
                 |> List.map (fun (a:CheckableItem<Song>) -> a.Value)
             this.Amount <- songs.Length
-            if lyrics && not (Directory.Exists(folder + "\\Lyrics")) then
-                Directory.CreateDirectory(folder + "\\Lyrics") |> ignore
-            loadStarted.Trigger()
-            downloadQueueAsync songs))
+            match this.Amount with
+            | 0 -> ()
+            | _ ->
+                if lyrics && not (Directory.Exists(folder + "\\Lyrics")) then
+                    Directory.CreateDirectory(folder + "\\Lyrics") |> ignore
+                loadStarted.Trigger()
+                downloadQueueAsync songs))
 
     interface IDataErrorInfo with
         member this.Error =  raise (new NotImplementedException())
