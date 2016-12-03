@@ -84,7 +84,7 @@ type VkAudio() =
         authSetted.Trigger()
         
     ///Gets the link required for the authorization  
-    member this.GetLink =
+    member this.GetLink () =
         "https://oauth.vk.com/authorize?client_id="   
         + this.AppID + "&scope=audio&redirect_uri="
         + "https://oauth.vk.com/blank.html"

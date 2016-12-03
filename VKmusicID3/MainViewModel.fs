@@ -16,6 +16,7 @@ open VkAudio
 
 module Helper =
     let mainThread func = Application.Current.Dispatcher.Invoke((new Action<_>(func)), [null]) |> ignore
+    let awaitTask = Async.AwaitIAsyncResult >> Async.Ignore
 
 type CheckableItem<'T> (value : 'T, isChecked : bool) =
     inherit ViewModelBase()
@@ -38,8 +39,10 @@ type MainViewModel (vkClient:VkAudio) as this =
     let songsLoaded = new Event<_>()
     let loadStarted = new Event<_>()
     let loadCompleted = new Event<_>()
-    let helpRequested = new Event<_>()
+    let aboutRequested = new Event<_>()
     let authRequested = new Event<_>()
+    let logoutCompleted = new Event<_>()
+    let logoutRequested = new Event<_>()
     let shutdownRequested = new Event<_>()
     let mutable (songs:CheckableItem<Song> list) = []
     let mutable format = "NUMX ARTIST - SONG"
@@ -62,10 +65,16 @@ type MainViewModel (vkClient:VkAudio) as this =
     member this.LoadStarted = loadStarted.Publish
 
     [<CLIEvent>]
-    member this.HelpRequested = helpRequested.Publish
+    member this.AboutRequested = aboutRequested.Publish
 
     [<CLIEvent>]
     member this.AuthRequested = authRequested.Publish
+
+    [<CLIEvent>]
+    member this.LogoutRequested = logoutRequested.Publish
+
+    [<CLIEvent>]
+    member this.LogoutCompleted = logoutCompleted.Publish
 
     [<CLIEvent>]
     member this.ShutdownRequested = shutdownRequested.Publish
@@ -129,9 +138,26 @@ type MainViewModel (vkClient:VkAudio) as this =
     member this.InvertSelecting = 
         new RelayCommand ((fun _ -> true), (fun _ -> 
             List.map (fun (a:CheckableItem<Song>) -> a.IsChecked <- not a.IsChecked; a) this.SongList |> ignore))
+    
+    member this.LogOut = 
+        new RelayCommand ((fun _ -> true), (fun _ ->
+             let web = new System.Windows.Forms.WebBrowser()
+             web.DocumentCompleted.Add(fun _ -> 
+                async {
+                    web.Navigate("javascript:void((function(){var a,b,c,e,f;f=0;a=document.cookie.split('; ');"
+                        + "for(e=0;e<a.length&&a[e];e++){f++;for(b='.'+location.host;b;b=b.replace(/^(?:%5C.|[^%5C.]+)/,''))"
+                        + "{for(c=location.pathname;c;c=c.replace(/.$/,'')){document.cookie=(a[e]+'; domain='+b+'; "
+                        + "path='+c+'; expires='+new Date((new Date()).getTime()-1e11).toGMTString());}}}})())")
+                    do! Task.Delay(1500) |> Helper.awaitTask // Hack to await logout
+                    (fun _ -> logoutCompleted.Trigger()) |> Helper.mainThread
+                } |> Async.Start
+             )
+             logoutRequested.Trigger()
+             web.Navigate("https://vk.com/")
+        ))
 
-    member this.ShowHelp = 
-        new RelayCommand ((fun _ -> true), (fun _ -> helpRequested.Trigger()))
+    member this.ShowAbout = 
+        new RelayCommand ((fun _ -> true), (fun _ -> aboutRequested.Trigger()))
 
     member this.ShowAuth = 
         new RelayCommand ((fun _ -> true), (fun _ -> authRequested.Trigger()))
@@ -140,10 +166,9 @@ type MainViewModel (vkClient:VkAudio) as this =
         new RelayCommand ((fun _ -> true), (fun _ -> shutdownRequested.Trigger()))
 
     member this.DownloadSongs =
-        let awaitTask = Async.AwaitIAsyncResult >> Async.Ignore
         let mutex = new SemaphoreSlim(1)
         let progressChange() =
-            async.Bind(mutex.WaitAsync()  |> awaitTask, (fun _ -> async.Zero())) |> ignore
+            async.Bind(mutex.WaitAsync()  |> Helper.awaitTask, (fun _ -> async.Zero())) |> ignore
             this.Downloaded <- this.Downloaded + 1
             if (this.Downloaded = this.Amount) then 
                 this.Downloaded <- 0
@@ -173,12 +198,12 @@ type MainViewModel (vkClient:VkAudio) as this =
                             | null -> ()
                             | _ -> 
                                 let text = vk.GetLyrics song.LyricsID
-                                Thread.Sleep(1000) //VK limitation of requests (this works for 1 to 4 number of threads)
+                                Thread.Sleep(1000) // VK limitation of requests (this works for 1 to 4 number of threads)
                                 File.WriteAllText(lyricsFileName, text.Replace("\n", "\r\n"))
                             
                                 let file = TagLib.File.Create(audioFileName)
                                 try
-                                    file.Tag.Lyrics <- text //UNSYNCEDLYRICS
+                                    file.Tag.Lyrics <- text // UNSYNCEDLYRICS
                                     file.Save()
                                 with
                                     | _ -> file.Save(); File.Delete(lyricsFileName)
@@ -188,7 +213,7 @@ type MainViewModel (vkClient:VkAudio) as this =
                 let downloadCompleted (args:DownloadDataCompletedEventArgs) =
                     try
                         File.WriteAllBytes(audioFileName, args.Result)
-                        //Working with ID3 tags
+                        // Working with ID3 tags
                         let file = TagLib.File.Create(audioFileName)
                         try
                             file.Tag.Title <- song.Title
@@ -207,14 +232,14 @@ type MainViewModel (vkClient:VkAudio) as this =
                 web.DownloadDataCompleted.Add(downloadCompleted)
                 if not (File.Exists(audioFileName)) then
                     web.DownloadDataAsync(new Uri(song.Url))
-                    async.Bind(signal.WaitAsync()  |> awaitTask, (fun _ -> async.Zero()))
+                    async.Bind(signal.WaitAsync()  |> Helper.awaitTask, (fun _ -> async.Zero()))
                 elif lyrics then loadLyrics(); async.Zero() else async.Zero()
 
             async {
                 let throttler = new SemaphoreSlim(4)
 
                 for elem in list do
-                    do! throttler.WaitAsync() |> awaitTask
+                    do! throttler.WaitAsync() |> Helper.awaitTask
 
                     async { 
                         do! processSong elem

@@ -14,10 +14,10 @@ open VkAudio
 open FSharpx
 open ViewModels
 
-let vk = new VkAudio(AppID = "4494604") //Your App ID
+let vk = new VkAudio(AppID = "4494604") // Your App ID
 
-let helpWindow() =
-    let window = new XAML<"Help.xaml">()
+let aboutWindow() =
+    let window = new XAML<"About.xaml">()
     window.Repository.RequestNavigate.Add(fun e -> System.Diagnostics.Process.Start(e.Uri.ToString())  |> ignore)
     window.Root
 
@@ -31,7 +31,7 @@ let resultWindow(viewModel) =
 
 let authWindow() = 
     let window = new XAML<"Auth.xaml">()
-    let viewModel = new ViewModels.AuthViewModel(vk) 
+    let viewModel = new ViewModels.AuthViewModel(vk)
     window.Root.MouseLeftButtonDown.Add(fun _ -> window.Root.DragMove())
     (window.Browser :?> Forms.WebBrowser).DocumentCompleted.Add(fun e ->
         (viewModel.TryAuth :> ICommand).Execute(e.Url)
@@ -58,9 +58,14 @@ let mainWindow() =
     viewModel.LoadCompleted.Add(fun _ ->
         window.Wrap.IsEnabled <- true
         resultWindow(viewModel).ShowDialog() |> ignore)
-    viewModel.HelpRequested.Add(fun _ -> helpWindow().ShowDialog() |> ignore)
+    viewModel.AboutRequested.Add(fun _ -> aboutWindow().ShowDialog() |> ignore)
     viewModel.AuthRequested.Add(fun _ -> 
         if authWindow().ShowDialog().Value then window.Root.Close() else window.Root.IsEnabled <- true)
+    viewModel.LogoutRequested.Add(fun _ -> window.Root.IsEnabled <- false)
+    viewModel.LogoutCompleted.Add(fun _ ->
+        System.Windows.Forms.Application.Restart()
+        System.Windows.Application.Current.Shutdown()
+    )
     viewModel.ShutdownRequested.Add(fun _ -> window.Root.Close())
     window.Root.DataContext <- viewModel
     window.Root

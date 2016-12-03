@@ -20,7 +20,8 @@
     </i:Interaction.Triggers>
     <StackPanel Name="Wrap">
         <Menu>
-            <MenuItem Header="_Help" Name="Help" Command="{Binding ShowHelp}" />
+            <MenuItem Header="_About" Name="About" Command="{Binding ShowAbout}" />
+            <MenuItem Header="_Log Out" Name="LogOut" Command="{Binding LogOut}" />
         </Menu>
         <Border BorderThickness="0" Padding="5">
             <StackPanel Name="Content">
@@ -87,10 +88,10 @@
                         <TextBox Name="Format" Text="{Binding Format, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" Height="20" Style="{StaticResource TextBoxError}" 
                                  Validation.ErrorTemplate="{x:Null}" />
                         <TextBlock>
-                            ARTIST - name of the artist<LineBreak />
-                            SONG - title of the song<LineBreak />
-                            NUM - song number in your playlist<LineBreak />
-                            NUMX - simply NUM with leading zeros
+                            ARTIST (name of the artist)<LineBreak />
+                            SONG (title of the song)<LineBreak />
+                            NUM (song number in your playlist)<LineBreak />
+                            NUMX (NUM with leading zeros)
                         </TextBlock>
                     </StackPanel>
                 </Border>
