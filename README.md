@@ -16,4 +16,4 @@
 ## Update
 VK is killing music API for developers! This application will not work anymore, unless new method to access music is implemeted. VK policy and management are becoming worse every year and I'm not going to use it anymore. Thus, I won't support this application anymore.   
 
-It's still a great example of creating GUI application purely in F# involving many things (WPF, asynchronous workflows, MVVM, etc).
+It's still a great example of creating GUI application purely in F# that involves many things (WPF, asynchronous workflows, MVVM, etc).
