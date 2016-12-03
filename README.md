@@ -1,10 +1,10 @@
 # VKmusicID3
 
-**VKmusicID3** helps to download music from a VK account.
+**VKmusicID3** helps to download music from a VK account *correctly*.
 
 ## Features
 * Downloads in multiple threads
-* Changes ID3 tags of downloaded songs to the ones that used in VK in order to represent them correctly on your MP3 player or Last.fm account
+* Sets correct ID3 tags (no more gibberish in your MP3 player or Last.fm account!)
 * Saves lyrics to both TXT files and UNSYNCEDLYRICS tag
 * Supports UTF-8, so your Japanese music library will be all right
 
