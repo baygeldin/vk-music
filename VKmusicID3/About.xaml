@@ -1,0 +1,16 @@
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Icon="/VKmusicID3;component/favicon.ico"
+        Title="Help" ResizeMode="NoResize" Height="195" Width="400" WindowStartupLocation="CenterScreen">
+    <Window.Background>
+        <ImageBrush ImageSource="/VKmusicID3;component/about.jpg"/>
+    </Window.Background>
+    <StackPanel Name="Wrap">
+        <Border Style="{StaticResource Graybg}" Padding="5" Margin="5">
+            <TextBlock TextWrapping="Wrap" TextAlignment="Justify">
+                <Bold>VKmusicID3</Bold> helps to download music from a VK account in multiple threads. It changes ID3 tags of downloaded songs to the ones that used in VK in order to represent them correctly on your MP3 player or Last.fm account. In addition, it saves lyrics to both TXT files and UNSYNCEDLYRICS tag. It supports UTF-8, so your Japanese music library will be all right. If you have problems, please, post them at repository issues.
+                <LineBreak /><LineBreak />
+                <Bold>Repository:</Bold> <Hyperlink NavigateUri="https://github.com/baygeldin/vk-music" Name="Repository">https://github.com/baygeldin/vk-music</Hyperlink>
+            </TextBlock>
+        </Border>
+    </StackPanel>
+</Window>
